@@ -8,7 +8,7 @@ case class Location(
     description: String,
     creatureIds: List[String],
     id: String = UUID.randomUUID().toString()
-)
+) extends Identifiable
 object LocationFactory {
   def from(location: PartialLocation, id: Option[String] = None): Location =
     id match {

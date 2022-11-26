@@ -8,8 +8,9 @@ import spray.json._
 import com.example.Utils.JsonSupport
 import com.example.Models.Creature
 import java.nio.file.FileSystemException
+import com.example.Models.Identifiable
 
-abstract class Repository[T]() extends JsonSupport {
+abstract class Repository[T <: Identifiable]() extends JsonSupport {
   val filename: String;
 
   def write(creature: T) = {
@@ -46,5 +47,22 @@ abstract class Repository[T]() extends JsonSupport {
       finally source.close()
 
     lines.toString()
+  }
+
+   def delete(id: String) = {
+    val allRecords = read()
+
+    writeAll(allRecords.filter(_.id != id))
+  }
+
+  def update(id: String, item: T) = {
+    val allRecords = read()
+
+    writeAll(allRecords.map((record) => {
+      record.id match {
+        case `id` => item
+        case _    => record
+      }
+    }))
   }
 }

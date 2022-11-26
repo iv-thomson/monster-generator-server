@@ -9,7 +9,7 @@ case class Creature(
     strength: Int,
     dexterity: Int,
     id: String = UUID.randomUUID().toString()
-)
+) extends Identifiable
 object CreatureFactory {
   def from(creature: PartialCreature, id: Option[String] = None): Creature =
     id match {

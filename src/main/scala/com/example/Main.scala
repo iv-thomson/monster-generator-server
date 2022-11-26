@@ -9,6 +9,7 @@ import scala.io.StdIn
 import com.example.Models.Creature
 import com.example.Services.CreatureService
 import com.example.Services.LocationService
+import com.example.Services.EncounterService
 
 object MonsterGenerator extends App {
   implicit val system = ActorSystem(Behaviors.empty, "my-system")
@@ -17,7 +18,11 @@ object MonsterGenerator extends App {
 
   val port = 8080
 
-  val routes = concat(new CreatureService().route, new LocationService().route)
+  val routes = concat(
+    new CreatureService().route,
+    new LocationService().route,
+    new EncounterService("encounter").route
+  )
 
   val bindingFuture =
     Http().newServerAt("localhost", port).bind(routes)
