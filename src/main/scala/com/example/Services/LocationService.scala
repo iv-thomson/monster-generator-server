@@ -3,15 +3,15 @@ package com.example.Services
 import akka.http.scaladsl.server.Directives
 
 import com.example.Utils.JsonSupport
-import com.example.Models.Creature
-import com.example.Repositories.CreatureRepository
-import com.example.Models.PartialCreature
-import com.example.Models.CreatureFactory
+
+import com.example.Models.LocationFactory
 import akka.http.javadsl.model.StatusCodes
 import akka.http.scaladsl.model
+import _root_.com.example.Models.PartialLocation
+import com.example.Repositories.LocationRepository
 
-class CreatureService extends Directives with JsonSupport {
-  private val repository = new CreatureRepository();
+class LocationService extends Directives with JsonSupport {
+  private val repository = new LocationRepository();
   private val cors = new CORSHandler {}
 
   val route = cors.corsHandler(
@@ -21,30 +21,30 @@ class CreatureService extends Directives with JsonSupport {
       },
       get {
         concat(
-          path("creature") {
+          path("location") {
             val creatures = repository.read()
             complete(creatures)
           },
-          path("creature" / Remaining) { id =>
+          path("location" / Remaining) { id =>
             repository.read().find(_.id == id) match {
-              case Some(creature) => complete(creature)
+              case Some(location) => complete(location)
               case None           => complete("Creature not found!")
             }
           }
         )
       },
       post {
-        path("creature") {
-          entity(as[PartialCreature]) { creature =>
+        path("location") {
+          entity(as[PartialLocation]) { location =>
             repository.write(
-              CreatureFactory.from(creature)
+              LocationFactory.from(location)
             )
             complete("OK")
           }
         }
       },
       delete {
-        path("creature" / Remaining) { id =>
+        path("location" / Remaining) { id =>
           repository.delete(id)
           complete("OK")
         }
