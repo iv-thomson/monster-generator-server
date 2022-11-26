@@ -48,6 +48,14 @@ class CreatureService extends Directives with JsonSupport {
           repository.delete(id)
           complete("OK")
         }
+      },
+      put {
+        path("creature" / Remaining) { id =>
+          entity(as[PartialCreature]) { creature =>
+            repository.update(id, CreatureFactory.from(creature, Option(id)))
+            complete("OK")
+          }
+        }
       }
     )
   )

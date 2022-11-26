@@ -10,14 +10,25 @@ case class Location(
     id: String = UUID.randomUUID().toString()
 )
 object LocationFactory {
-  def from(location: PartialLocation): Location = {
-    new Location(
-      location.name,
-      location.image,
-      location.description,
-      location.creatureIds
-    )
-  }
+  def from(location: PartialLocation, id: Option[String] = None): Location =
+    id match {
+      case Some(value) =>
+        new Location(
+          location.name,
+          location.image,
+          location.description,
+          location.creatureIds,
+          value
+        )
+      case None =>
+        new Location(
+          location.name,
+          location.image,
+          location.description,
+          location.creatureIds
+        )
+    }
+
 }
 case class PartialLocation(
     name: String,

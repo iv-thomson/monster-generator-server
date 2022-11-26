@@ -11,15 +11,27 @@ case class Creature(
     id: String = UUID.randomUUID().toString()
 )
 object CreatureFactory {
-  def from(creature: PartialCreature): Creature = {
-    new Creature(
-      creature.name,
-      creature.image,
-      creature.vitality,
-      creature.dexterity,
-      creature.strength
-    )
-  }
+  def from(creature: PartialCreature, id: Option[String] = None): Creature =
+    id match {
+      case Some(value) =>
+        new Creature(
+          creature.name,
+          creature.image,
+          creature.vitality,
+          creature.strength,
+          creature.dexterity,
+          value
+        )
+      case None =>
+        new Creature(
+          creature.name,
+          creature.image,
+          creature.vitality,
+          creature.strength,
+          creature.dexterity
+        )
+    }
+
 }
 case class PartialCreature(
     name: String,

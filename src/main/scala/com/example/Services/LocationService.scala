@@ -22,8 +22,8 @@ class LocationService extends Directives with JsonSupport {
       get {
         concat(
           path("location") {
-            val creatures = repository.read()
-            complete(creatures)
+            val locations = repository.read()
+            complete(locations)
           },
           path("location" / Remaining) { id =>
             repository.read().find(_.id == id) match {
@@ -47,6 +47,15 @@ class LocationService extends Directives with JsonSupport {
         path("location" / Remaining) { id =>
           repository.delete(id)
           complete("OK")
+        }
+      },
+      put {
+        path("location" / Remaining) { id =>
+          entity(as[PartialLocation]) { location =>
+            repository.update(id, LocationFactory.from(location, Option(id)))
+
+            complete("OK")
+          }
         }
       }
     )

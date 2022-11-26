@@ -26,4 +26,15 @@ class CreatureRepository() extends Repository[Creature] {
 
     writeAll(allRecords.filter(_.id != id))
   }
+
+  def update(id: String, item: Creature) = {
+    val allRecords = read()
+
+    writeAll(allRecords.map((record) => {
+      record.id match {
+        case `id` => item
+        case _  => record
+      }
+    }))
+  }
 }

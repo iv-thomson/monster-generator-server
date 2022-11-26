@@ -26,4 +26,15 @@ class LocationRepository() extends Repository[Location] {
 
     writeAll(allRecords.filter(_.id != id))
   }
+
+  def update(id: String, item: Location) = {
+    val allRecords = read()
+
+    writeAll(allRecords.map((record) => {
+      record.id match {
+        case `id` => item
+        case _    => record
+      }
+    }))
+  }
 }
