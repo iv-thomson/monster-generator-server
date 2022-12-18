@@ -10,7 +10,9 @@ import akka.http.scaladsl.model
 import com.example.Repositories.EncounterRepository
 import com.example.Models.EncounterFactory
 
-class EncounterService(val endpoint: String) extends Directives with JsonSupport {
+class EncounterService(val endpoint: String)
+    extends Directives
+    with JsonSupport {
   private val repository = new EncounterRepository();
   private val cors = new CORSHandler {}
 
@@ -22,13 +24,22 @@ class EncounterService(val endpoint: String) extends Directives with JsonSupport
       get {
         concat(
           path(endpoint) {
-            val creatures = repository.read()
-            complete(creatures)
+            parameters("id".repeated) { (ids) =>
+              val encounters = repository.read()
+              val filteredEncounters =
+                ids.flatMap((id) => encounters.find(_.id == id))
+
+              if (filteredEncounters.toList.length > 0) {
+                complete(filteredEncounters)
+              } else {
+                complete(encounters)
+              }
+            }
           },
           path(endpoint / Remaining) { id =>
             repository.read().find(_.id == id) match {
-              case Some(creature) => complete(creature)
-              case None           => complete("Creature not found!")
+              case Some(encounter) => complete(encounter)
+              case None           => complete("Encounter not found!")
             }
           }
         )
