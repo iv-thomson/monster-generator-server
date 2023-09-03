@@ -9,7 +9,7 @@ class SlickTablesGeneric(val profile: PostgresProfile) {
 
   class CreatureTable(tag: Tag)
       extends Table[Creature](tag, Some("adventure"), "Creature") {
-    def id = column[String]("creature_id", O.PrimaryKey, O.AutoInc)
+    def id = column[String]("creature_id", O.PrimaryKey)
     def name = column[String]("name")
     def image = column[String]("image")
     def vitality = column[Int]("vitality")
@@ -28,7 +28,7 @@ class SlickTablesGeneric(val profile: PostgresProfile) {
 
   class LocationTable(tag: Tag)
       extends Table[Location](tag, Some("adventure"), "Location") {
-    def id = column[String]("location_id", O.PrimaryKey, O.AutoInc)
+    def id = column[String]("location_id", O.PrimaryKey)
     def name = column[String]("name")
     def image = column[String]("image")
     def description = column[String]("description")
