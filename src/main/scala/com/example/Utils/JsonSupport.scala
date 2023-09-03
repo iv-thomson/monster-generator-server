@@ -23,8 +23,8 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val creatureFormat = jsonFormat6(Creature)
   implicit val partialCreatureFormat = jsonFormat5(PartialCreature)
 
-  implicit val locationFormat = jsonFormat5(Location)
-  implicit val partialLocationFormat = jsonFormat4(PartialLocation)
+  implicit val locationFormat = jsonFormat4(Location)
+  implicit val partialLocationFormat = jsonFormat3(PartialLocation)
 
   implicit val encounterFormat = jsonFormat5(Encounter)
   implicit val partialEncounterFormat = jsonFormat4(PartialEncounter)

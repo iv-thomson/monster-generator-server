@@ -7,7 +7,7 @@ import com.example.Utils.JsonSupport
 import com.example.Models.LocationFactory
 import akka.http.javadsl.model.StatusCodes
 import akka.http.scaladsl.model
-import _root_.com.example.Models.PartialLocation
+import com.example.Models.PartialLocation
 import com.example.Repositories.LocationRepository
 
 class LocationService extends Directives with JsonSupport {
@@ -22,23 +22,17 @@ class LocationService extends Directives with JsonSupport {
       get {
         concat(
           path("location") {
-            val locations = repository.read()
-            complete(locations)
+            complete(repository.list)
           },
           path("location" / Remaining) { id =>
-            repository.read().find(_.id == id) match {
-              case Some(location) => complete(location)
-              case None           => complete("Creature not found!")
-            }
+            complete(repository.get(id))
           }
         )
       },
       post {
         path("location") {
           entity(as[PartialLocation]) { location =>
-            repository.write(
-              LocationFactory.from(location)
-            )
+            repository.create(LocationFactory.from(location))
             complete("OK")
           }
         }
