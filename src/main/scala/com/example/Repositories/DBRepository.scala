@@ -9,9 +9,7 @@ abstract class DBRepository[T] {
 
   def create(creature: T): Future[Int]
 
-  def getAll(): Future[List[T]]
-
-  def getAll(ids: Iterable[String]): Future[List[T]]
+  def list(ids: Iterable[String]): Future[List[T]]
 
   def get(id: String): Future[T]
 }

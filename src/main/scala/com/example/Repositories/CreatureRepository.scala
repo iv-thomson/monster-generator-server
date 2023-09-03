@@ -15,47 +15,55 @@ class CreatureRepository() extends DBRepository[Creature] {
   implicit val ec =
     ExecutionContext.fromExecutor(Executors.newWorkStealingPool(4))
 
-  def update(id: String, creature: Creature): Future[Int] = {
+  type EntityType = Creature;
+  val table = SlickTables.creatureTable
+
+  def update(id: String, entity: EntityType): Future[Int] = {
     val updateQuery =
-      SlickTables.creatureTable.filter(_.id === id).update(creature)
+      table.filter(_.id === id).update(entity)
 
     Connection.db.run(updateQuery)
   }
 
   def delete(id: String): Future[Int] = {
-    val query = SlickTables.creatureTable.filter(_.id === id).delete
+    val query = table.filter(_.id === id).delete
 
     Connection.db.run(query)
   }
 
-  def create(creature: Creature): Future[Int] = {
-    val insertQuery = SlickTables.creatureTable += creature
+  def create(entity: EntityType): Future[Int] = {
+    val insertQuery = table += entity
 
     Connection.db.run(insertQuery)
   }
 
-  def getAll(): Future[List[Creature]] = {
-    val query = SlickTables.creatureTable.result
+  def list(ids: Iterable[String]) = {
+    if (ids.toList.length > 0) getAll(ids)
+    else getAll()
+  }
+
+  def get(id: String): Future[EntityType] = {
+    getAll().map(entities => findEntity(entities, id))
+  }
+
+  private def getAll(): Future[List[EntityType]] = {
+    val query = table.result
 
     Connection.db.run(query).map(_.toList)
   }
 
-  def getAll(ids: Iterable[String]): Future[List[Creature]] = {
-    val query = SlickTables.creatureTable.result
+  private def getAll(ids: Iterable[String]): Future[List[EntityType]] = {
+    val query = table.result
 
     Connection.db.run(query).map(_.toList).map(filter(ids, _))
   }
 
-  def get(id: String): Future[Creature] = {
-    getAll().map(creatures => findCreature(creatures, id))
+  private def filter(ids: Iterable[String], entities: List[EntityType]) = {
+    entities.filter(entity => ids.exists(id => id == entity.id))
   }
 
-  private def filter(ids: Iterable[String], creatures: List[Creature]) = {
-    creatures.filter(creature => ids.exists(id => id == creature.id))
-  }
-
-  private def findCreature(creatures: Seq[Creature], id: String): Creature = {
-    creatures.find(creature => creature.id == id) match {
+  private def findEntity(entities: Seq[EntityType], id: String): EntityType = {
+    entities.find(entity => entity.id == id) match {
       case Some(value) => value
       case None        => throw new Exception("Creature not found")
     }

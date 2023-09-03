@@ -23,11 +23,7 @@ class CreatureService extends Directives with JsonSupport {
         concat(
           path("creature") {
             parameters("id".repeated) { (ids) =>
-              val creatures =
-                if (ids.toList.length > 0) repository.getAll(ids)
-                else repository.getAll()
-
-              complete(creatures)
+              complete(repository.list(ids))
             }
           },
           path("creature" / Remaining) { id =>
