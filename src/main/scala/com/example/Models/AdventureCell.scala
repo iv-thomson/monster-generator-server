@@ -6,14 +6,21 @@ import java.util.UUID
 
 case class AdventureMap(
     cells: List[AdventureCellDTO],
+    name: String,
+    description: String,
     id: String = UUID.randomUUID().toString()
 ) extends Identifiable {
   def addAdventure(adventure: AdventureCellDTO) = {
-    new AdventureMap(cells.appended(adventure), id)
+    new AdventureMap(cells.appended(adventure), name, description, id)
   }
 
   def removeAdventure(adventureId: String) = {
-    new AdventureMap(cells.filter(_.id.get != adventureId), id)
+    new AdventureMap(
+      cells.filter(_.id.get != adventureId),
+      name,
+      description,
+      id
+    )
   }
 
   def updateAdventure(adventure: AdventureCellDTO) = {
@@ -24,6 +31,8 @@ case class AdventureMap(
           case _            => cell
         }
       ),
+      name,
+      description,
       id
     )
   }
@@ -38,11 +47,15 @@ object AdventureMapFactory {
       case Some(value) =>
         new AdventureMap(
           adventureMap.cells,
+          adventureMap.name,
+          adventureMap.description,
           value
         )
       case None =>
         new AdventureMap(
-          adventureMap.cells
+          adventureMap.cells,
+          adventureMap.name,
+          adventureMap.description
         )
     }
 
@@ -50,6 +63,8 @@ object AdventureMapFactory {
 
 case class PartialAdventureMap(
     cells: List[AdventureCellDTO],
+    name: String,
+    description: String
 )
 
 case class AdventureCellDTO(

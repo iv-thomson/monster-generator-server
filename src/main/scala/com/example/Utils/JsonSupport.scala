@@ -31,6 +31,6 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
   implicit val adventureCellFormat = jsonFormat6(AdventureCellDTO)
   implicit val partialAdventureCellFormat = jsonFormat5(PartialAdventureCellDTO)
-  implicit val adventureMapFormat = jsonFormat2(AdventureMap)
-  implicit val partialAdventureMapFormat = jsonFormat1(PartialAdventureMap)
+  implicit val adventureMapFormat = jsonFormat4(AdventureMap)
+  implicit val partialAdventureMapFormat = jsonFormat3(PartialAdventureMap)
 }
