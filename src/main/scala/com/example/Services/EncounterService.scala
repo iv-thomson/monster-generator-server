@@ -9,12 +9,16 @@ import akka.http.javadsl.model.StatusCodes
 import akka.http.scaladsl.model
 import com.example.Repositories.EncounterRepository
 import com.example.Models.EncounterFactory
+import scala.util.Success
+import scala.util.Failure
 
 class EncounterService(val endpoint: String)
     extends Directives
     with JsonSupport {
   private val repository = new EncounterRepository();
   private val cors = new CORSHandler {}
+  implicit val ec: scala.concurrent.ExecutionContext =
+    scala.concurrent.ExecutionContext.global
 
   val route = cors.corsHandler(
     concat(
@@ -25,31 +29,21 @@ class EncounterService(val endpoint: String)
         concat(
           path(endpoint) {
             parameters("id".repeated) { (ids) =>
-              val encounters = repository.read()
-              val filteredEncounters =
-                ids.flatMap((id) => encounters.find(_.id == id))
-
-              if (filteredEncounters.toList.length > 0) {
-                complete(filteredEncounters)
-              } else {
-                complete(encounters)
-              }
+              complete(repository.list(ids))
             }
           },
           path(endpoint / Remaining) { id =>
-            repository.read().find(_.id == id) match {
-              case Some(encounter) => complete(encounter)
-              case None           => complete("Encounter not found!")
-            }
+            complete(repository.get(id))
           }
         )
       },
       post {
         path(endpoint) {
           entity(as[PartialEncounter]) { encounter =>
-            repository.write(
+            repository.create(
               EncounterFactory.from(encounter)
             )
+
             complete("OK")
           }
         }

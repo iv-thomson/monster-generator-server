@@ -6,7 +6,6 @@ case class Encounter(
     name: String,
     description: String,
     creatures: List[String],
-    items: List[String],
     id: String = UUID.randomUUID().toString()
 ) extends Identifiable
 object EncounterFactory {
@@ -17,7 +16,6 @@ object EncounterFactory {
           encounter.name,
           encounter.description,
           encounter.creatures,
-          encounter.items,
           value
         )
       case None =>
@@ -25,7 +23,6 @@ object EncounterFactory {
           encounter.name,
           encounter.description,
           encounter.creatures,
-          encounter.items
         )
     }
 
@@ -34,5 +31,4 @@ case class PartialEncounter(
     name: String,
     description: String,
     creatures: List[String],
-    items: List[String]
 )

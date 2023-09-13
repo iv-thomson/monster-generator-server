@@ -3,9 +3,11 @@ package com.example.Tables
 import slick.jdbc.PostgresProfile
 import com.example.Models.Creature
 import com.example.Models.Location
+import com.example.Models.Encounter
+
 
 class SlickTablesGeneric(val profile: PostgresProfile) {
-  import profile.api._
+  import CustomPostgresProfile.api._
 
   class CreatureTable(tag: Tag)
       extends Table[Creature](tag, Some("adventure"), "Creature") {
@@ -41,8 +43,24 @@ class SlickTablesGeneric(val profile: PostgresProfile) {
     ) <> (Location.tupled, Location.unapply)
   }
 
+  class EncounterTable(tag: Tag)
+      extends Table[Encounter](tag,Some("adventure"), "Encounter") {
+    def id = column[String]("encounter_id", O.PrimaryKey)
+    def name = column[String]("name")
+    def description = column[String]("description")
+    def creatures = column[List[String]]("creatures")
+
+    override def * = (
+      name,
+      description,
+      creatures,
+      id
+    ) <> (Encounter.tupled, Encounter.unapply)
+  }
+
   lazy val creatureTable = TableQuery[CreatureTable]
   lazy val locationTable = TableQuery[LocationTable]
+  lazy val encounterTable = TableQuery[EncounterTable]
 }
 
 object SlickTables extends SlickTablesGeneric(PostgresProfile)
