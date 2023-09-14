@@ -1,24 +1,20 @@
 package com.example.Models
 
-package com.example.Models
-
 import java.util.UUID
 
 case class AdventureMap(
     cells: List[AdventureCellDTO],
     name: String,
-    description: String,
     id: String = UUID.randomUUID().toString()
 ) extends Identifiable {
   def addAdventure(adventure: AdventureCellDTO) = {
-    new AdventureMap(cells.appended(adventure), name, description, id)
+    new AdventureMap(cells.appended(adventure), name, id)
   }
 
   def removeAdventure(adventureId: String) = {
     new AdventureMap(
       cells.filter(_.id.get != adventureId),
       name,
-      description,
       id
     )
   }
@@ -32,7 +28,6 @@ case class AdventureMap(
         }
       ),
       name,
-      description,
       id
     )
   }
@@ -48,14 +43,12 @@ object AdventureMapFactory {
         new AdventureMap(
           adventureMap.cells,
           adventureMap.name,
-          adventureMap.description,
           value
         )
       case None =>
         new AdventureMap(
           adventureMap.cells,
           adventureMap.name,
-          adventureMap.description
         )
     }
 
@@ -64,7 +57,6 @@ object AdventureMapFactory {
 case class PartialAdventureMap(
     cells: List[AdventureCellDTO],
     name: String,
-    description: String
 )
 
 case class AdventureCellDTO(
