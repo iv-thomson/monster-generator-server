@@ -1,23 +1,61 @@
 package com.example.Repositories
 
-import java.io.FileWriter
-import java.io.File
-
-import spray.json._
-
-import com.example.Utils.JsonSupport
+import com.example.Repositories.DBRepository
+import com.example.Tables.Connection
+import com.example.Tables.SlickTables
 import com.example.Models.Location
-import java.nio.file.FileSystemException
+import scala.concurrent.Future
+import java.util.concurrent.Executors
+import scala.concurrent.ExecutionContext
+import scala.util.Success
+import scala.util.Failure
+import slick.lifted.TableQuery
 
-class LocationRepository() extends Repository[Location] {
-  val filename: String = "output/location.json"
+class LocationRepository() {
+  import SlickTables.profile.api._
+  implicit val ec =
+    ExecutionContext.fromExecutor(Executors.newWorkStealingPool(4))
 
-  protected def parseJson(items: String): List[Location] = {
-    val json = items.parseJson
+  type EntityType = Location;
+  val table = SlickTables.locationTable
 
-    json.convertTo[List[Location]]
+  def update(id: String, entity: EntityType): Future[Int] = {
+    val updateQuery =
+      table.filter(_.id === id).update(entity)
+
+    Connection.db.run(updateQuery)
   }
-  protected def stringify(items: List[Location]): String = {
-    items.toJson.toString()
+
+  def delete(id: String): Future[Int] = {
+    val query = table.filter(_.id === id).delete
+
+    Connection.db.run(query)
+  }
+
+  def create(entity: EntityType): Future[Int] = {
+    val insertQuery = table += entity
+
+    Connection.db.run(insertQuery)
+  }
+
+  def get(id: String): Future[EntityType] = {
+    list().map(entities => findEntity(entities, id))
+  }
+
+  def list(): Future[List[EntityType]] = {
+    val query = table.result
+
+    Connection.db.run(query).map(_.toList)
+  }
+
+  private def filter(ids: Iterable[String], entities: List[EntityType]) = {
+    entities.filter(entity => ids.exists(id => id == entity.id))
+  }
+
+  private def findEntity(entities: Seq[EntityType], id: String): EntityType = {
+    entities.find(entity => entity.id == id) match {
+      case Some(value) => value
+      case None        => throw new Exception("Location not found")
+    }
   }
 }

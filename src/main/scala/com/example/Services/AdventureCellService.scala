@@ -7,13 +7,15 @@ import com.example.Utils.JsonSupport
 import com.example.Models.LocationFactory
 import akka.http.javadsl.model.StatusCodes
 import akka.http.scaladsl.model
-import com.example.Repositories.AdventureMapRepository
-import com.example.Models.com.example.Models.AdventureMap
-import com.example.Models.com.example.Models.PartialAdventureMap
-import com.example.Models.com.example.Models.AdventureMapFactory
+import com.example.Repositories.AdventureRepository
+import com.example.Models.AdventureMap
+import com.example.Models.PartialAdventureMap
+import com.example.Models.AdventureMapFactory
 
-class AdventureMapService(val endpoint: String) extends Directives with JsonSupport {
-  private val repository = new AdventureMapRepository();
+class AdventureMapService(val endpoint: String)
+    extends Directives
+    with JsonSupport {
+  private val repository = new AdventureRepository();
   private val cors = new CORSHandler {}
 
   val route = cors.corsHandler(
@@ -24,21 +26,19 @@ class AdventureMapService(val endpoint: String) extends Directives with JsonSupp
       get {
         concat(
           path(endpoint) {
-            val adventureMaps = repository.read()
-            complete(adventureMaps)
+             parameters("id".repeated) { (ids) =>
+              complete(repository.list(ids))
+            }
           },
           path(endpoint / Remaining) { id =>
-            repository.read().find(_.id == id) match {
-              case Some(adventureMap) => complete(adventureMap)
-              case None           => complete("Adventure map not found!")
-            }
+            complete(repository.get(id))
           }
         )
       },
       post {
         path(endpoint) {
           entity(as[PartialAdventureMap]) { adventureMap =>
-            repository.write(
+            repository.create(
               AdventureMapFactory.from(adventureMap)
             )
             complete("OK")
@@ -54,7 +54,10 @@ class AdventureMapService(val endpoint: String) extends Directives with JsonSupp
       put {
         path(endpoint / Remaining) { id =>
           entity(as[PartialAdventureMap]) { adventureMap =>
-            repository.update(id, AdventureMapFactory.from(adventureMap, Some(id)))
+            repository.update(
+              id,
+              AdventureMapFactory.from(adventureMap, Some(id))
+            )
             complete("OK")
           }
         }

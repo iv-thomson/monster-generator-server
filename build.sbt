@@ -12,5 +12,10 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
-  "org.scalatest" %% "scalatest" % "3.1.0" % Test
+  "org.scalatest" %% "scalatest" % "3.1.0" % Test,
+  "com.typesafe.slick" %% "slick" % "3.3.3",
+  "org.postgresql" % "postgresql" % "42.3.4",
+  "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
+  "com.github.tminglei" %% "slick-pg" % "0.20.3",
+  "com.github.tminglei" %% "slick-pg_play-json" % "0.20.3"
 )

@@ -8,11 +8,11 @@ import com.example.Models.Location
 import com.example.Models.PartialLocation
 import com.example.Models.Encounter
 import com.example.Models.PartialEncounter
-import com.example.Models.com.example.Models.AdventureCell
-import com.example.Models.com.example.Models.AdventureCellDTO
-import com.example.Models.com.example.Models.AdventureMap
-import com.example.Models.com.example.Models.PartialAdventureCellDTO
-import com.example.Models.com.example.Models.PartialAdventureMap
+import com.example.Models.AdventureCell
+import com.example.Models.AdventureCellDTO
+import com.example.Models.AdventureMap
+import com.example.Models.PartialAdventureCellDTO
+import com.example.Models.PartialAdventureMap
 
 case class Creatures(values: List[Creature])
 case class Locations(values: List[Location])
@@ -23,14 +23,14 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val creatureFormat = jsonFormat6(Creature)
   implicit val partialCreatureFormat = jsonFormat5(PartialCreature)
 
-  implicit val locationFormat = jsonFormat5(Location)
-  implicit val partialLocationFormat = jsonFormat4(PartialLocation)
+  implicit val locationFormat = jsonFormat4(Location)
+  implicit val partialLocationFormat = jsonFormat3(PartialLocation)
 
-  implicit val encounterFormat = jsonFormat5(Encounter)
-  implicit val partialEncounterFormat = jsonFormat4(PartialEncounter)
+  implicit val encounterFormat = jsonFormat4(Encounter)
+  implicit val partialEncounterFormat = jsonFormat3(PartialEncounter)
 
   implicit val adventureCellFormat = jsonFormat6(AdventureCellDTO)
   implicit val partialAdventureCellFormat = jsonFormat5(PartialAdventureCellDTO)
-  implicit val adventureMapFormat = jsonFormat2(AdventureMap)
-  implicit val partialAdventureMapFormat = jsonFormat1(PartialAdventureMap)
+  implicit val adventureMapFormat = jsonFormat3(AdventureMap)
+  implicit val partialAdventureMapFormat = jsonFormat2(PartialAdventureMap)
 }

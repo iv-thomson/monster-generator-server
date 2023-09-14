@@ -6,7 +6,6 @@ case class Location(
     name: String,
     image: String,
     description: String,
-    creatureIds: List[String],
     id: String = UUID.randomUUID().toString()
 ) extends Identifiable
 object LocationFactory {
@@ -17,15 +16,13 @@ object LocationFactory {
           location.name,
           location.image,
           location.description,
-          location.creatureIds,
           value
         )
       case None =>
         new Location(
           location.name,
           location.image,
-          location.description,
-          location.creatureIds
+          location.description
         )
     }
 
@@ -33,6 +30,5 @@ object LocationFactory {
 case class PartialLocation(
     name: String,
     image: String,
-    description: String,
-    creatureIds: List[String]
+    description: String
 )
