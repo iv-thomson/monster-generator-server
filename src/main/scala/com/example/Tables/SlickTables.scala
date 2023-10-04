@@ -19,6 +19,7 @@ class SlickTablesGeneric(val profile: PostgresProfile) {
     def vitality = column[Int]("vitality")
     def strength = column[Int]("strength")
     def dexterity = column[Int]("dexterity")
+    def tags = column[List[String]]("tags")
 
     override def * = (
       name,
@@ -26,6 +27,7 @@ class SlickTablesGeneric(val profile: PostgresProfile) {
       vitality,
       strength,
       dexterity,
+      tags,
       id
     ) <> (Creature.tupled, Creature.unapply)
   }

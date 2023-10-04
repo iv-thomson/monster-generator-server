@@ -8,6 +8,7 @@ case class Creature(
     vitality: Int,
     strength: Int,
     dexterity: Int,
+    tags: List[String] = List.empty,
     id: String = UUID.randomUUID().toString()
 ) extends Identifiable
 object CreatureFactory {
@@ -20,6 +21,7 @@ object CreatureFactory {
           creature.vitality,
           creature.strength,
           creature.dexterity,
+          creature.tags,
           value
         )
       case None =>
@@ -28,7 +30,8 @@ object CreatureFactory {
           creature.image,
           creature.vitality,
           creature.strength,
-          creature.dexterity
+          creature.dexterity,
+          creature.tags,
         )
     }
 
@@ -38,5 +41,6 @@ case class PartialCreature(
     image: String,
     vitality: Int,
     strength: Int,
-    dexterity: Int
+    dexterity: Int,
+    tags: List[String]
 )

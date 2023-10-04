@@ -20,8 +20,8 @@ case class Locations(values: List[Location])
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val printer = PrettyPrinter
 
-  implicit val creatureFormat = jsonFormat6(Creature)
-  implicit val partialCreatureFormat = jsonFormat5(PartialCreature)
+  implicit val creatureFormat = jsonFormat7(Creature)
+  implicit val partialCreatureFormat = jsonFormat6(PartialCreature)
 
   implicit val locationFormat = jsonFormat4(Location)
   implicit val partialLocationFormat = jsonFormat3(PartialLocation)
