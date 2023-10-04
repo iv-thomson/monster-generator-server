@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContext
 import scala.util.Success
 import scala.util.Failure
 
-class CreatureRepository() extends DBRepository[Creature] {
+class CreatureRepository() {
   import SlickTables.profile.api._
   implicit val ec =
     ExecutionContext.fromExecutor(Executors.newWorkStealingPool(4))
@@ -37,9 +37,34 @@ class CreatureRepository() extends DBRepository[Creature] {
     Connection.db.run(insertQuery)
   }
 
-  def list(ids: Iterable[String]) = {
-    if (ids.toList.length > 0) getAll(ids)
+  def list(ids: Iterable[String], tags: Iterable[String]) = {
+    val idList = ids.toList
+    val tagList = tags.toList
+
+    if (idList.length > 0 && idList.length > 0) getAll(ids, tags)
+    else if (ids.toList.length > 0) getAll(ids)
+    else if (tagList.toList.length > 0) getAllByTags(tags)
     else getAll()
+  }
+
+  def getAllByTags(tags: Iterable[String]) = {
+    val query = table.result.map(
+      _.filter((c) => c.tags.containsSlice(tags.toSeq))
+    )
+
+    Connection.db.run(query).map(_.toList)
+  }
+
+  def getAll(ids: Iterable[String], tags: Iterable[String]) = {
+    val query = table.result.map(
+      _.filter((c) =>
+        c.tags.containsSlice(tags.toSeq) && ids.toList.contains(
+          c.id
+        )
+      )
+    )
+
+    Connection.db.run(query).map(_.toList)
   }
 
   def get(id: String): Future[EntityType] = {

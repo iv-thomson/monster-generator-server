@@ -22,8 +22,8 @@ class CreatureService extends Directives with JsonSupport {
       get {
         concat(
           path("creature") {
-            parameters("id".repeated) { (ids) =>
-              complete(repository.list(ids))
+            parameters("id".repeated, "tag".repeated) { (ids, tags) =>
+              complete(repository.list(ids, tags))
             }
           },
           path("creature" / Remaining) { id =>
