@@ -6,6 +6,7 @@ import com.example.Models.Location
 import com.example.Models.Encounter
 import com.example.Models.AdventureMap
 import com.example.Models.AdventureCellDTO
+import com.example.Models.user.User
 import play.api.libs.json.JsValue
 
 class SlickTablesGeneric(val profile: PostgresProfile) {
@@ -76,10 +77,25 @@ class SlickTablesGeneric(val profile: PostgresProfile) {
     ) <> (AdventureMap.tupled, AdventureMap.unapply)
   }
 
+  class UserTable(tag: Tag)
+      extends Table[User](tag, Some("adventure"), "User") {
+
+    def id = column[String]("user_id", O.PrimaryKey)
+    def name = column[String]("name")
+    def hash = column[String]("hash")
+
+    override def * = (
+      name,
+      hash,
+      id
+    ) <> (User.tupled, User.unapply)
+  }
+
   lazy val creatureTable = TableQuery[CreatureTable]
   lazy val locationTable = TableQuery[LocationTable]
   lazy val encounterTable = TableQuery[EncounterTable]
   lazy val mapTable = TableQuery[MapTable]
+  lazy val userTable = TableQuery[UserTable]
 }
 
 object SlickTables extends SlickTablesGeneric(PostgresProfile)

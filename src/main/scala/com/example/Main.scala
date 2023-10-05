@@ -11,6 +11,7 @@ import com.example.Services.CreatureService
 import com.example.Services.LocationService
 import com.example.Services.EncounterService
 import com.example.Services.AdventureMapService
+import com.example.Services.LoginService
 
 object MonsterGenerator extends App {
   implicit val system = ActorSystem(Behaviors.empty, "my-system")
@@ -23,7 +24,8 @@ object MonsterGenerator extends App {
     new CreatureService().route,
     new LocationService().route,
     new EncounterService("encounter").route,
-    new AdventureMapService("adventure-map").route
+    new AdventureMapService("adventure-map").route,
+    new LoginService().route
   )
 
   val bindingFuture =
