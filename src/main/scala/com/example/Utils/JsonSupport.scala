@@ -14,6 +14,7 @@ import com.example.Models.AdventureMap
 import com.example.Models.PartialAdventureCellDTO
 import com.example.Models.PartialAdventureMap
 import com.example.Models.user.LoginRequest
+import com.example.Models.user.UserRegistrationForm
 
 case class Creatures(values: List[Creature])
 case class Locations(values: List[Location])
@@ -36,4 +37,5 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val partialAdventureMapFormat = jsonFormat2(PartialAdventureMap)
 
   implicit val loginRequestFormat = jsonFormat2(LoginRequest)
+  implicit val registrationFormFormat = jsonFormat4(UserRegistrationForm)
 }

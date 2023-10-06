@@ -9,3 +9,11 @@ case class User(
     hash: String,
     id: String = UUID.randomUUID().toString()
 )
+
+object UserFactory {
+    import com.github.t3hnar.bcrypt._
+
+    def from(form: UserRegistrationForm) = {
+        new User(form.name, form.password.boundedBcrypt)
+    }
+}
