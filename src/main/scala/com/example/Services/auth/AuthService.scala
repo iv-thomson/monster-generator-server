@@ -1,4 +1,5 @@
 package com.example.Services.auth
+import com.example.Services.RegistrationService
 
 import akka.http.scaladsl.server.Directives._
 

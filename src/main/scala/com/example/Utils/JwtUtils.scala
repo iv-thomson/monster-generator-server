@@ -28,9 +28,10 @@ object JwtUtility {
   def validateToken(token: String): Option[String] = {
     Try(Jwt.decode(token, secretKey, Seq(JwtAlgorithm.HS256))) match {
       case Success(claims) =>
-        val claimContent = claims.getOrElse(JwtClaim(""))
-        val claimJson: JsValue = Json.parse(claimContent.content)
+        val claimContent = claims.getOrElse(JwtClaim("")).toJson
+        val claimJson: JsValue = Json.parse(claimContent)
         val userId = (claimJson \ "sub").asOpt[String]
+
         userId
       case Failure(_) =>
         None

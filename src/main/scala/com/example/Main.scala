@@ -13,6 +13,7 @@ import com.example.Services.EncounterService
 import com.example.Services.AdventureMapService
 
 import com.example.Services.auth.AuthService
+import com.example.Services.AuthHandler
 
 object MonsterGenerator extends App {
   implicit val system = ActorSystem(Behaviors.empty, "my-system")

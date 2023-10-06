@@ -1,4 +1,4 @@
-package com.example.Services.auth
+package com.example.Services
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
