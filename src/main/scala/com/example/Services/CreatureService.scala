@@ -20,22 +20,25 @@ class CreatureService extends Directives with JsonSupport with AuthHandler {
         (complete(model.StatusCodes.OK))
       },
       get {
-        authenticateToken() {
-          concat(
-            path("creature") {
+        concat(
+          path("creature") {
+            authenticateToken() {
               parameters("id".repeated, "tag".repeated) { (ids, tags) =>
                 complete(repository.list(ids, tags))
               }
-            },
+            }
+          },
+          authenticateToken() {
             path("creature" / Remaining) { id =>
               complete(repository.get(id))
             }
-          )
-        }
+          }
+        )
+
       },
       post {
-        authenticateToken() {
-          path("creature") {
+        path("creature") {
+          authenticateToken() {
             entity(as[PartialCreature]) { creature =>
               repository.create(
                 CreatureFactory.from(creature)
@@ -46,16 +49,16 @@ class CreatureService extends Directives with JsonSupport with AuthHandler {
         }
       },
       delete {
-        authenticateToken() {
-          path("creature" / Remaining) { id =>
+        path("creature" / Remaining) { id =>
+          authenticateToken() {
             repository.delete(id)
             complete("OK")
           }
         }
       },
       put {
-        authenticateToken() {
-          path("creature" / Remaining) { id =>
+        path("creature" / Remaining) { id =>
+          authenticateToken() {
             entity(as[PartialCreature]) { creature =>
               repository.update(id, CreatureFactory.from(creature, Option(id)))
               complete("OK")
