@@ -14,7 +14,8 @@ import com.example.Models.AdventureMapFactory
 
 class AdventureMapService(val endpoint: String)
     extends Directives
-    with JsonSupport {
+    with JsonSupport
+    with AuthHandler {
   private val repository = new AdventureRepository();
   private val cors = new CORSHandler {}
 
@@ -26,39 +27,49 @@ class AdventureMapService(val endpoint: String)
       get {
         concat(
           path(endpoint) {
-             parameters("id".repeated) { (ids) =>
-              complete(repository.list(ids))
+            authenticateToken() {
+              parameters("id".repeated) { (ids) =>
+                complete(repository.list(ids))
+              }
             }
           },
           path(endpoint / Remaining) { id =>
-            complete(repository.get(id))
+            authenticateToken() {
+              complete(repository.get(id))
+            }
           }
         )
       },
       post {
         path(endpoint) {
-          entity(as[PartialAdventureMap]) { adventureMap =>
-            repository.create(
-              AdventureMapFactory.from(adventureMap)
-            )
-            complete("OK")
+          authenticateToken() {
+            entity(as[PartialAdventureMap]) { adventureMap =>
+              repository.create(
+                AdventureMapFactory.from(adventureMap)
+              )
+              complete("OK")
+            }
           }
         }
       },
       delete {
         path(endpoint / Remaining) { id =>
-          repository.delete(id)
-          complete("OK")
+          authenticateToken() {
+            repository.delete(id)
+            complete("OK")
+          }
         }
       },
       put {
         path(endpoint / Remaining) { id =>
-          entity(as[PartialAdventureMap]) { adventureMap =>
-            repository.update(
-              id,
-              AdventureMapFactory.from(adventureMap, Some(id))
-            )
-            complete("OK")
+          authenticateToken() {
+            entity(as[PartialAdventureMap]) { adventureMap =>
+              repository.update(
+                id,
+                AdventureMapFactory.from(adventureMap, Some(id))
+              )
+              complete("OK")
+            }
           }
         }
       }

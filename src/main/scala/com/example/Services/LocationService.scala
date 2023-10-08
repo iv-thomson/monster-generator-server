@@ -10,7 +10,7 @@ import akka.http.scaladsl.model
 import com.example.Models.PartialLocation
 import com.example.Repositories.LocationRepository
 
-class LocationService extends Directives with JsonSupport {
+class LocationService extends Directives with JsonSupport with AuthHandler {
   private val repository = new LocationRepository();
   private val cors = new CORSHandler {}
 
@@ -22,33 +22,43 @@ class LocationService extends Directives with JsonSupport {
       get {
         concat(
           path("location") {
-            complete(repository.list)
+            authenticateToken() {
+              complete(repository.list)
+            }
           },
           path("location" / Remaining) { id =>
-            complete(repository.get(id))
+            authenticateToken() {
+              complete(repository.get(id))
+            }
           }
         )
       },
       post {
         path("location") {
-          entity(as[PartialLocation]) { location =>
-            repository.create(LocationFactory.from(location))
-            complete("OK")
+          authenticateToken() {
+            entity(as[PartialLocation]) { location =>
+              repository.create(LocationFactory.from(location))
+              complete("OK")
+            }
           }
         }
       },
       delete {
         path("location" / Remaining) { id =>
-          repository.delete(id)
-          complete("OK")
+          authenticateToken() {
+            repository.delete(id)
+            complete("OK")
+          }
         }
       },
       put {
         path("location" / Remaining) { id =>
-          entity(as[PartialLocation]) { location =>
-            repository.update(id, LocationFactory.from(location, Option(id)))
+          authenticateToken() {
+            entity(as[PartialLocation]) { location =>
+              repository.update(id, LocationFactory.from(location, Option(id)))
 
-            complete("OK")
+              complete("OK")
+            }
           }
         }
       }

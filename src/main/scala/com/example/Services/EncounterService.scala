@@ -14,7 +14,8 @@ import scala.util.Failure
 
 class EncounterService(val endpoint: String)
     extends Directives
-    with JsonSupport {
+    with JsonSupport
+    with AuthHandler {
   private val repository = new EncounterRepository();
   private val cors = new CORSHandler {}
   implicit val ec: scala.concurrent.ExecutionContext =
@@ -28,37 +29,50 @@ class EncounterService(val endpoint: String)
       get {
         concat(
           path(endpoint) {
-            parameters("id".repeated) { (ids) =>
-              complete(repository.list(ids))
+            authenticateToken() {
+              parameters("id".repeated) { (ids) =>
+                complete(repository.list(ids))
+              }
             }
           },
           path(endpoint / Remaining) { id =>
-            complete(repository.get(id))
+            authenticateToken() {
+              complete(repository.get(id))
+            }
           }
         )
       },
       post {
         path(endpoint) {
-          entity(as[PartialEncounter]) { encounter =>
-            repository.create(
-              EncounterFactory.from(encounter)
-            )
+          authenticateToken() {
+            entity(as[PartialEncounter]) { encounter =>
+              repository.create(
+                EncounterFactory.from(encounter)
+              )
 
-            complete("OK")
+              complete("OK")
+            }
           }
         }
       },
       delete {
         path(endpoint / Remaining) { id =>
-          repository.delete(id)
-          complete("OK")
+          authenticateToken() {
+            repository.delete(id)
+            complete("OK")
+          }
         }
       },
       put {
         path(endpoint / Remaining) { id =>
-          entity(as[PartialEncounter]) { encounter =>
-            repository.update(id, EncounterFactory.from(encounter, Option(id)))
-            complete("OK")
+          authenticateToken() {
+            entity(as[PartialEncounter]) { encounter =>
+              repository.update(
+                id,
+                EncounterFactory.from(encounter, Option(id))
+              )
+              complete("OK")
+            }
           }
         }
       }

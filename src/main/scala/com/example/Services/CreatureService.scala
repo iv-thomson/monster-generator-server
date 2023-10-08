@@ -10,7 +10,7 @@ import com.example.Models.CreatureFactory
 import akka.http.javadsl.model.StatusCodes
 import akka.http.scaladsl.model
 
-class CreatureService extends Directives with JsonSupport {
+class CreatureService extends Directives with JsonSupport with AuthHandler {
   private val repository = new CreatureRepository();
   private val cors = new CORSHandler {}
 
@@ -22,36 +22,47 @@ class CreatureService extends Directives with JsonSupport {
       get {
         concat(
           path("creature") {
-            parameters("id".repeated) { (ids) =>
-              complete(repository.list(ids))
+            authenticateToken() {
+              parameters("id".repeated, "tag".repeated) { (ids, tags) =>
+                complete(repository.list(ids, tags))
+              }
             }
           },
-          path("creature" / Remaining) { id =>
-            complete(repository.get(id))
+          authenticateToken() {
+            path("creature" / Remaining) { id =>
+              complete(repository.get(id))
+            }
           }
         )
+
       },
       post {
         path("creature") {
-          entity(as[PartialCreature]) { creature =>
-            repository.create(
-              CreatureFactory.from(creature)
-            )
-            complete("OK")
+          authenticateToken() {
+            entity(as[PartialCreature]) { creature =>
+              repository.create(
+                CreatureFactory.from(creature)
+              )
+              complete("OK")
+            }
           }
         }
       },
       delete {
         path("creature" / Remaining) { id =>
-          repository.delete(id)
-          complete("OK")
+          authenticateToken() {
+            repository.delete(id)
+            complete("OK")
+          }
         }
       },
       put {
         path("creature" / Remaining) { id =>
-          entity(as[PartialCreature]) { creature =>
-            repository.update(id, CreatureFactory.from(creature, Option(id)))
-            complete("OK")
+          authenticateToken() {
+            entity(as[PartialCreature]) { creature =>
+              repository.update(id, CreatureFactory.from(creature, Option(id)))
+              complete("OK")
+            }
           }
         }
       }
